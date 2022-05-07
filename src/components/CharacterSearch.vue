@@ -1,5 +1,5 @@
 <template>
-  <div id="search" class="Search">
+  <div id="search" class="m-2">
     <div class="flex items-center justify-center">
       <div class="flex border-2 rounded">
         <input
@@ -7,6 +7,9 @@
           class="px-4 py-2 w-80"
           placeholder="Search..."
           v-model="searchTerm"
+          @click="getCharacterByName(searchTerm)"
+          @input="getCharacterByName(searchTerm)"
+          @blur="waitAndHideResults()"
         />
         <button
           class="flex items-center justify-center px-4 border-l"
@@ -26,23 +29,24 @@
       </div>
     </div>
     <div id="results" class="absolute w-full" v-show="showResults">
-      <div class="flex items-center justify-center"> 
-    <ul class="bg-white w-80">
-      <li
-        class="flex m-2"
-        v-for="character in byNameList"
-        :key="character.name"
-        @click="setCharacterId(character.id)"
-      >
-        <img
-          class="w-8 h-8 mx-2"
-          :src="getThumbnail(character)"
-          :alt="character.name"
-        />
-        <span>{{ character.name }}</span>
-      </li>
-    </ul>
-    </div>
+      <div class="flex items-center justify-center">
+        <ul class="bg-white w-80" v-if="byNameList.length > 0">
+          <li
+            class="flex m-2"
+            v-for="character in byNameList"
+            :key="character.name"
+            @click="setCharacterId(character.id)"
+          >
+            <img
+              class="w-8 h-8 mx-2"
+              :src="getThumbnail(character)"
+              :alt="character.name"
+            />
+            <span>{{ character.name }}</span>
+          </li>
+        </ul>
+        <span class="bg-white w-80 border-2" v-else>No results found</span>
+      </div>
     </div>
   </div>
 </template>
@@ -70,17 +74,26 @@ export default {
           process.env.VUE_APP_PRIVATE_API_KEY +
           process.env.VUE_APP_PUBLIC_API_KEY
       );
-      axios
-        .get("https://gateway.marvel.com/v1/public/characters", {
-          params: {
+
+      let params = searchTerm
+        ? {
             ts,
             apikey: process.env.VUE_APP_PUBLIC_API_KEY,
             hash,
             nameStartsWith: searchTerm,
-          },
+          }
+        : {
+            ts,
+            apikey: process.env.VUE_APP_PUBLIC_API_KEY,
+            hash,
+          };
+
+      axios
+        .get("https://gateway.marvel.com/v1/public/characters", {
+          params,
         })
         .then((response) => {
-          this.byNameList = response.data.data.results.slice(0,10);
+          this.byNameList = response.data.data.results.slice(0, 10);
           this.showResults = true;
         })
         .catch((e) => {
@@ -96,6 +109,9 @@ export default {
       this.showResults = false;
       this.$emit("setCharacterId", id);
     },
+    waitAndHideResults(){
+      setTimeout(() => this.showResults = false, 200);
+    }
   },
 };
 </script>
