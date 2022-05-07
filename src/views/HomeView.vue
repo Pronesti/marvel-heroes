@@ -1,24 +1,24 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <SelectedCharacter :selectedCharacter="selectedCharacter" />
     <button @click="getComic">test</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from "@/components/HelloWorld.vue";
+import SelectedCharacter from "@/components/SelectedCharacter.vue";
 import md5 from "md5";
 import axios from "axios";
 
 export default {
   name: "HomeView",
   components: {
-    HelloWorld,
+    SelectedCharacter,
   },
   data() {
     return {
-      characters: [],
+      charactersList: [],
+      selectedCharacter: 1012717,
       reversed: [],
     };
   },
@@ -40,7 +40,7 @@ export default {
         })
         .then((response) => {
           this.reversed = response.data.data.results;
-          this.characters = this.reversed.reverse();
+          this.charactersList = this.reversed.reverse();
         })
         .catch((e) => {
           console.log(e);
