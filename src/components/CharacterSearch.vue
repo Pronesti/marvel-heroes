@@ -4,7 +4,7 @@
       <div class="flex border-2 rounded">
         <input
           type="search"
-          class="px-4 py-2 w-80"
+          class="px-4 py-2 w-full md:w-80"
           placeholder="Search..."
           v-model="searchTerm"
           @click="getCharacters(searchTerm)"
@@ -47,7 +47,7 @@
             />
             <span>{{ character.name }}</span>
           </li>
-          <template v-if="byComicList.length > 0">
+          <template v-if="charactersByComic.length > 0">
             <hr />
             By Comic
             <hr />
@@ -57,7 +57,20 @@
               :key="'comic-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <span>{{ character.name }}<span class="text-gray-400"> in {{character.comic_title}} </span></span>
+              <span>{{ character.name }}<span class="text-gray-400"> in {{character.title}} </span></span>
+            </li>
+          </template>
+          <template v-if="charactersBySeries.length > 0">
+            <hr />
+            By series
+            <hr />
+            <li
+              class="flex m-2"
+              v-for="character in charactersBySeries"
+              :key="'series-' + character.name"
+              @click="setCharacterId(character.id)"
+            >
+              <span>{{ character.name }}<span class="text-gray-400"> in {{character.title}} </span></span>
             </li>
           </template>
         </ul>
@@ -79,6 +92,7 @@ export default {
       searchTerm: "",
       byNameList: [],
       byComicList: [],
+      bySeriesList: [],
       showResults: false,
     };
   },
@@ -86,9 +100,20 @@ export default {
     charactersByComic(){
       let characters = this.byComicList.map((comic) => comic.characters.items.map((character) => { 
         return {
-          id: character.resourceURI.split('/').at(-1),
+          id: parseInt(character.resourceURI.split('/').at(-1)),
           name: character.name,
-          comic_title: comic.title
+          title: comic.title
+          };
+        })).flat();
+
+        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5);
+    },
+      charactersBySeries(){
+      let characters = this.bySeriesList.map((series) => series.characters.items.map((character) => { 
+        return {
+          id: parseInt(character.resourceURI.split('/').at(-1)),
+          name: character.name,
+          title: series.title
           };
         })).flat();
 
@@ -136,9 +161,21 @@ export default {
           console.log(e);
         });
     },
+    getCharactersBySeries(searchTerm) {
+      if (searchTerm == "") return;
+      this.axiosGetRequest("series", { titleStartsWith: searchTerm })
+        .then((response) => {
+          this.bySeriesList = response.data.data.results.filter((series) => series.characters.available > 0);
+          this.showResults = true;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     getCharacters(searchTerm) {
       this.getCharactersByName(searchTerm);
       this.getCharactersByComic(searchTerm);
+      this.getCharactersBySeries(searchTerm);
     },
     getThumbnail(character) {
       return character
