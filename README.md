@@ -1,6 +1,7 @@
 # marvel-heroes
 * Responsive Design
 * Dark Mode
+* Vercel deploy: https://marvel-heroes-mu.vercel.app/
 
 ## Project setup
 ```
