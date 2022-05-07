@@ -48,29 +48,27 @@
             <span>{{ character.name }}</span>
           </li>
           <template v-if="charactersByComic.length > 0">
-            <hr />
-            By Comic
+            <span class="font-semibold">By Comic</span>
             <hr />
             <li
-              class="flex m-2"
+              class="m-2"
               v-for="character in charactersByComic"
               :key="'comic-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <span>{{ character.name }}<span class="text-gray-400"> in {{character.title}} </span></span>
+              <div>{{ character.name }}</div><div class="text-sm text-gray-400">{{character.title}} </div>
             </li>
           </template>
           <template v-if="charactersBySeries.length > 0">
-            <hr />
-            By series
+            <span class="font-semibold">By series</span>
             <hr />
             <li
-              class="flex m-2"
+              class=" m-2"
               v-for="character in charactersBySeries"
               :key="'series-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <span>{{ character.name }}<span class="text-gray-400"> in {{character.title}} </span></span>
+              <div>{{ character.name }}</div><div class="text-sm text-gray-400">{{character.title}} </div>
             </li>
           </template>
         </ul>
@@ -139,11 +137,11 @@ export default {
       });
     },
     getCharactersByName(searchTerm) {
-      let extraParams = searchTerm ? { nameStartsWith: searchTerm } : {};
+      let extraParams = searchTerm ? { nameStartsWith: searchTerm, limit: 5 } : { limit: 5 };
 
       this.axiosGetRequest("characters", extraParams)
         .then((response) => {
-          this.byNameList = response.data.data.results.slice(0, 10);
+          this.byNameList = response.data.data.results;
           this.showResults = true;
         })
         .catch((e) => {

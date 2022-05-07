@@ -1,8 +1,8 @@
 <template>
-  <div class="hello">
-    <div class="block md:flex items-center" v-if="character">
+  <div id="selectedCharacter">
+    <div class="block md:flex md:items-center md:gap-3" v-if="character">
       <div class="characterImage flex-1 flex justify-center items-center">
-        <img class="w-72 md:w-full" :src="getImage" :alt="character.name" />
+        <img class="w-72 md:w-auto" :src="getImage" :alt="character.name" />
       </div>
       <div class="flex-1 flex flex-col">
         <div class="flex-1">
@@ -34,6 +34,7 @@
                 hover:text-gray-600 hover:border-gray-300
                 dark:hover:text-gray-300
                 capitalize
+                cursor-pointer
               "
               v-for="item in ['comics', 'series', 'stories', 'events']"
               :class="{
@@ -57,9 +58,9 @@
         </div>
       </div>
     </div>
-    <div class="h-screen flex justify-center items-center" v-else>
+    <div class="h-full flex justify-center items-center" v-else>
       <loading-spinner v-if="loading" />
-      <span v-else> Busca un personaje</span>
+      <span v-else> Search character by name, comic title or series title.</span>
     </div>
   </div>
 </template>
