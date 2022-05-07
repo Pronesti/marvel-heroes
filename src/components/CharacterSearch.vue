@@ -7,13 +7,13 @@
           class="px-4 py-2 w-80"
           placeholder="Search..."
           v-model="searchTerm"
-          @click="getCharacterByName(searchTerm)"
-          @input="getCharacterByName(searchTerm)"
+          @click="getCharacters(searchTerm)"
+          @input="getCharacters(searchTerm)"
           @blur="waitAndHideResults()"
         />
         <button
           class="flex items-center justify-center px-4 border-l"
-          @click="getCharacterByName(searchTerm)"
+          @click="getCharacters(searchTerm)"
         >
           <svg
             class="w-6 h-6 text-gray-600"
@@ -30,7 +30,10 @@
     </div>
     <div id="results" class="absolute w-full" v-show="showResults">
       <div class="flex items-center justify-center">
-        <ul class="bg-white w-80" v-if="byNameList.length > 0">
+        <ul
+          class="bg-white w-80"
+          v-if="byNameList.length > 0 || byComicList.length > 0"
+        >
           <li
             class="flex m-2"
             v-for="character in byNameList"
@@ -44,6 +47,24 @@
             />
             <span>{{ character.name }}</span>
           </li>
+          <template v-if="byComicList.length > 0">
+            <hr />
+            By Comic
+            <hr />
+            <li
+              class="flex m-2"
+              v-for="character in byComicList"
+              :key="character.name"
+              @click="setCharacterId(character.id)"
+            >
+              <img
+                class="w-8 h-8 mx-2"
+                :src="getThumbnail(character)"
+                :alt="character.name"
+              />
+              <span>{{ character.name }}</span>
+            </li>
+          </template>
         </ul>
         <span class="bg-white w-80 border-2" v-else>No results found</span>
       </div>
@@ -62,12 +83,13 @@ export default {
     return {
       searchTerm: "",
       byNameList: [],
+      byComicList: [],
       showResults: false,
     };
   },
   computed: {},
   methods: {
-    getCharacterByName(searchTerm) {
+    axiosGetRequest(url, extraParams = {}) {
       let ts = Math.floor(Date.now() / 1000);
       let hash = md5(
         ts +
@@ -75,23 +97,19 @@ export default {
           process.env.VUE_APP_PUBLIC_API_KEY
       );
 
-      let params = searchTerm
-        ? {
-            ts,
-            apikey: process.env.VUE_APP_PUBLIC_API_KEY,
-            hash,
-            nameStartsWith: searchTerm,
-          }
-        : {
-            ts,
-            apikey: process.env.VUE_APP_PUBLIC_API_KEY,
-            hash,
-          };
+      return axios.get("https://gateway.marvel.com/v1/public/" + url, {
+        params: {
+          ts,
+          apikey: process.env.VUE_APP_PUBLIC_API_KEY,
+          hash,
+          ...extraParams,
+        },
+      });
+    },
+    getCharactersByName(searchTerm) {
+      let extraParams = searchTerm ? { nameStartsWith: searchTerm } : {};
 
-      axios
-        .get("https://gateway.marvel.com/v1/public/characters", {
-          params,
-        })
+      this.axiosGetRequest("characters", extraParams)
         .then((response) => {
           this.byNameList = response.data.data.results.slice(0, 10);
           this.showResults = true;
@@ -99,6 +117,30 @@ export default {
         .catch((e) => {
           console.log(e);
         });
+    },
+    getCharactersByComic(searchTerm) {
+      if (searchTerm == "") return;
+      this.axiosGetRequest("comics", { titleStartsWith: searchTerm })
+        .then((response) => {
+          let comics_id = response.data.data.results
+            .slice(0, 10)
+            .map((comic) => comic.id);
+          if (comics_id.length > 0) {
+            this.axiosGetRequest("characters", {
+              comics: comics_id.join(","),
+            }).then((response) => {
+              this.byComicList = response.data.data.results.slice(0, 5);
+            });
+          }
+          this.showResults = true;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    getCharacters(searchTerm) {
+      this.getCharactersByName(searchTerm);
+      this.getCharactersByComic(searchTerm);
     },
     getThumbnail(character) {
       return character
@@ -109,9 +151,9 @@ export default {
       this.showResults = false;
       this.$emit("setCharacterId", id);
     },
-    waitAndHideResults(){
-      setTimeout(() => this.showResults = false, 200);
-    }
+    waitAndHideResults() {
+      setTimeout(() => (this.showResults = false), 200);
+    },
   },
 };
 </script>
