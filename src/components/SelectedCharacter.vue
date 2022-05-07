@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
     <div class="block md:flex items-center" v-if="character">
-      <div class="characterImage flex-1 flex">
-        <img :src="getImage" :alt="character.name" />
+      <div class="characterImage flex-1 flex justify-center items-center">
+        <img class="w-72 md:w-full" :src="getImage" :alt="character.name" />
       </div>
       <div class="flex-1 flex flex-col">
         <div class="flex-1">
@@ -10,7 +10,7 @@
             <h2 class="text-2xl">{{ character.name }}</h2>
           </div>
           <div class="characterDescription">
-            <p class="text-base">{{ character.description }}</p>
+            <p class="text-base p-2">{{ character.description }}</p>
           </div>
         </div>
         <div class="flex-1">
