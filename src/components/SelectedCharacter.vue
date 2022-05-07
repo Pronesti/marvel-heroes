@@ -78,6 +78,11 @@ export default {
         });
     },
   },
+  watch: {
+    selectedCharacter: function (){
+      this.getCharacter() 
+    }
+  },
 };
 </script>
 
