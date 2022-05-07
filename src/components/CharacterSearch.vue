@@ -53,16 +53,11 @@
             <hr />
             <li
               class="flex m-2"
-              v-for="character in byComicList"
-              :key="character.name"
+              v-for="character in charactersByComic"
+              :key="'comic-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <img
-                class="w-8 h-8 mx-2"
-                :src="getThumbnail(character)"
-                :alt="character.name"
-              />
-              <span>{{ character.name }}</span>
+              <span>{{ character.name }}<span class="text-gray-400"> in {{character.comic_title}} </span></span>
             </li>
           </template>
         </ul>
@@ -87,7 +82,19 @@ export default {
       showResults: false,
     };
   },
-  computed: {},
+  computed: {
+    charactersByComic(){
+      let characters = this.byComicList.map((comic) => comic.characters.items.map((character) => { 
+        return {
+          id: character.resourceURI.split('/').at(-1),
+          name: character.name,
+          comic_title: comic.title
+          };
+        })).flat();
+
+        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5);
+    }
+  },
   methods: {
     axiosGetRequest(url, extraParams = {}) {
       let ts = Math.floor(Date.now() / 1000);
@@ -122,16 +129,7 @@ export default {
       if (searchTerm == "") return;
       this.axiosGetRequest("comics", { titleStartsWith: searchTerm })
         .then((response) => {
-          let comics_id = response.data.data.results
-            .slice(0, 10)
-            .map((comic) => comic.id);
-          if (comics_id.length > 0) {
-            this.axiosGetRequest("characters", {
-              comics: comics_id.join(","),
-            }).then((response) => {
-              this.byComicList = response.data.data.results.slice(0, 5);
-            });
-          }
+          this.byComicList = response.data.data.results.filter((comic) => comic.characters.available > 0);
           this.showResults = true;
         })
         .catch((e) => {
@@ -146,6 +144,9 @@ export default {
       return character
         ? character.thumbnail.path + "." + character.thumbnail.extension
         : null;
+    },
+    getCharacterId(character){
+      return character.resourceURI.split('/').at(-1);
     },
     setCharacterId(id) {
       this.showResults = false;
