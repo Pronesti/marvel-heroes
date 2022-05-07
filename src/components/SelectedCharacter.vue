@@ -124,9 +124,12 @@ export default {
           this.loading = false;
         })
         .catch((e) => {
-          console.log(e);
+          this.setError(e);
           this.loading = false;
         });
+    },
+    setError(err){
+      this.$emit('error', err);
     },
   },
   watch: {

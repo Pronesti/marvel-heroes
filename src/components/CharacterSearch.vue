@@ -72,7 +72,7 @@
             </li>
           </template>
         </ul>
-        <span class="bg-white w-80 border-2" v-else>No results found</span>
+        <span class="bg-white w-80 dark:bg-slate-500 dark:text-slate-200" v-else>No results found</span>
       </div>
     </div>
   </div>
@@ -145,7 +145,7 @@ export default {
           this.showResults = true;
         })
         .catch((e) => {
-          console.log(e);
+          this.setError(e);
         });
     },
     getCharactersByComic(searchTerm) {
@@ -156,7 +156,7 @@ export default {
           this.showResults = true;
         })
         .catch((e) => {
-          console.log(e);
+          this.setError(e);
         });
     },
     getCharactersBySeries(searchTerm) {
@@ -167,7 +167,7 @@ export default {
           this.showResults = true;
         })
         .catch((e) => {
-          console.log(e);
+          this.setError(e);
         });
     },
     getCharacters(searchTerm) {
@@ -186,6 +186,9 @@ export default {
     setCharacterId(id) {
       this.showResults = false;
       this.$emit("setCharacterId", id);
+    },
+    setError(err){
+      this.$emit('error', err);
     },
     waitAndHideResults() {
       setTimeout(() => (this.showResults = false), 200);

@@ -9,8 +9,12 @@
       </li>
     </ul>
   </div>
-  <div class="itemList m-4 p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300" role="alert" v-else>
-    No {{ groupName }} found.
+  <div class="itemList"  v-else>
+    <div class="h-52 md:h-[32rem]">
+      <div class="p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300" role="alert">
+        No {{ groupName }} found.
+      </div>
+    </div>
   </div>
 </template>
 
