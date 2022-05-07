@@ -1,11 +1,33 @@
 <template>
   <div id="search" class="Search">
-    <input
-      type="text"
-      v-model="searchTerm"
-      @change="getCharacterByName(searchTerm)"
-    />
-    <ul>
+    <div class="flex items-center justify-center">
+      <div class="flex border-2 rounded">
+        <input
+          type="search"
+          class="px-4 py-2 w-80"
+          placeholder="Search..."
+          v-model="searchTerm"
+        />
+        <button
+          class="flex items-center justify-center px-4 border-l"
+          @click="getCharacterByName(searchTerm)"
+        >
+          <svg
+            class="w-6 h-6 text-gray-600"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="results" class="absolute w-full" v-show="showResults">
+      <div class="flex items-center justify-center"> 
+    <ul class="bg-white w-80">
       <li
         class="flex m-2"
         v-for="character in byNameList"
@@ -20,6 +42,8 @@
         <span>{{ character.name }}</span>
       </li>
     </ul>
+    </div>
+    </div>
   </div>
 </template>
 
@@ -34,6 +58,7 @@ export default {
     return {
       searchTerm: "",
       byNameList: [],
+      showResults: false,
     };
   },
   computed: {},
@@ -55,7 +80,8 @@ export default {
           },
         })
         .then((response) => {
-          this.byNameList = response.data.data.results;
+          this.byNameList = response.data.data.results.slice(0,10);
+          this.showResults = true;
         })
         .catch((e) => {
           console.log(e);
@@ -66,9 +92,10 @@ export default {
         ? character.thumbnail.path + "." + character.thumbnail.extension
         : null;
     },
-    setCharacterId(id){
-      this.$emit('setCharacterId', id);
-    }
+    setCharacterId(id) {
+      this.showResults = false;
+      this.$emit("setCharacterId", id);
+    },
   },
 };
 </script>
