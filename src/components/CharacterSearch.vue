@@ -1,10 +1,10 @@
 <template>
   <div id="search" class="m-2">
     <div class="flex items-center justify-center">
-      <div class="flex border-2 rounded">
+      <div class="flex border-2 rounded dark:border-slate-500">
         <input
           type="search"
-          class="px-4 py-2 w-full md:w-80"
+          class="px-4 py-2 w-full md:w-80 dark:bg-slate-500 dark:text-white"
           placeholder="Search..."
           v-model="searchTerm"
           @click="getCharacters(searchTerm)"
@@ -12,11 +12,11 @@
           @blur="waitAndHideResults()"
         />
         <button
-          class="flex items-center justify-center px-4 border-l"
+          class="flex items-center justify-center px-4 border-l dark:bg-slate-600 dark:border-slate-500"
           @click="getCharacters(searchTerm)"
         >
           <svg
-            class="w-6 h-6 text-gray-600"
+            class="w-6 h-6 text-gray-600 dark:text-white "
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -31,7 +31,7 @@
     <div id="results" class="absolute w-full" v-show="showResults">
       <div class="flex items-center justify-center">
         <ul
-          class="bg-white w-80"
+          class="bg-white w-80  dark:bg-slate-500 dark:text-slate-200"
           v-if="byNameList.length > 0 || byComicList.length > 0"
         >
           <li
@@ -56,7 +56,7 @@
               :key="'comic-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <div>{{ character.name }}</div><div class="text-sm text-gray-400">{{character.title}} </div>
+              <div>{{ character.name }}</div><div class="text-sm text-gray-400 dark:text-slate-400">{{character.title}} </div>
             </li>
           </template>
           <template v-if="charactersBySeries.length > 0">
@@ -68,7 +68,7 @@
               :key="'series-' + character.name"
               @click="setCharacterId(character.id)"
             >
-              <div>{{ character.name }}</div><div class="text-sm text-gray-400">{{character.title}} </div>
+              <div>{{ character.name }}</div><div class="text-sm text-gray-400 dark:text-slate-400">{{character.title}} </div>
             </li>
           </template>
         </ul>

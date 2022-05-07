@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="dark:bg-slate-800">
     <router-view/>
   </div>
 </template>
@@ -16,5 +16,6 @@
 html, body, #app{
   height: 100vh;
   overflow-y: hidden;
+  overflow-x: hidden;
 }
 </style>

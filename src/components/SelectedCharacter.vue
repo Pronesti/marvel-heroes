@@ -6,11 +6,11 @@
       </div>
       <div class="flex-1 flex flex-col">
         <div class="flex-1">
-          <div class="characterName">
-            <h2 class="text-2xl">{{ character.name }}</h2>
+          <div class="characterName p-3">
+            <h2 class="text-2xl dark:text-slate-200">{{ character.name }}</h2>
           </div>
-          <div class="characterDescription">
-            <p class="text-base p-2">{{ character.description }}</p>
+          <div class="characterDescription min-h-[6rem]">
+            <p class="text-base p-2 dark:text-slate-200">{{ character.description }}</p>
           </div>
         </div>
         <div class="flex-1">
@@ -60,7 +60,7 @@
     </div>
     <div class="h-full flex justify-center items-center" v-else>
       <loading-spinner v-if="loading" />
-      <span v-else> Search character by name, comic title or series title.</span>
+      <span class="flex p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300" role="alert" v-else> Search character by name, comic title or series title.</span>
     </div>
   </div>
 </template>
