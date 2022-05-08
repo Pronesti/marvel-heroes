@@ -7,10 +7,10 @@
       <div class="flex-1 flex flex-col">
         <div class="flex-1">
           <div class="characterName p-3">
-            <h2 class="text-2xl dark:text-slate-200">{{ character.name }}</h2>
+            <input type="text" class="text-2xl text-center rounded dark:text-slate-200 dark:bg-slate-500" :value="computedCharacter.name" @input="(e) => setStorageCharacter('name', e)" />
           </div>
-          <div class="characterDescription min-h-[6rem]">
-            <p class="text-base p-2 dark:text-slate-200">{{ character.description }}</p>
+          <div class="characterDescription min-h-[6rem] p-4 pr-8">
+            <textarea class="w-full h-24 md:h-32 m-4 text-base p-2 rounded dark:text-slate-200 dark:bg-slate-500" :value="computedCharacter.description" @input="(e) => setStorageCharacter('description', e)" />
           </div>
         </div>
         <div class="flex-1">
@@ -83,12 +83,13 @@ export default {
   data() {
     return {
       loading: false,
+      storageCharacter: null,
       character: null,
       currentTab: "comics",
     };
   },
   mounted() {
-    this.selectedCharacter && this.getCharacter();
+    this.selectedCharacter && this.fetchCharacter();
   },
   computed: {
     getImage() {
@@ -98,9 +99,15 @@ export default {
             this.character.thumbnail.extension
         : null;
     },
+    computedCharacter(){ 
+        return {
+          ...this.character, 
+          ...this.storageCharacter
+          } 
+        },
   },
   methods: {
-    getCharacter() {
+    fetchCharacter() {
       this.loading = true;
       let ts = Math.floor(Date.now() / 1000);
       let hash = md5(
@@ -121,6 +128,13 @@ export default {
         )
         .then((response) => {
           this.character = response.data.data.results[0];
+          let storagedCharacter = this.getCharacterFromStorage(this.selectedCharacter)
+          if(storagedCharacter){
+            this.storageCharacter = storagedCharacter;
+          }else{
+            this.saveCharacterToStorage(response.data.data.results[0]);
+            this.storageCharacter = this.getCharacterFromStorage(this.selectedCharacter)
+          }
           this.loading = false;
         })
         .catch((e) => {
@@ -131,10 +145,21 @@ export default {
     setError(err){
       this.$emit('error', err);
     },
+    getCharacterFromStorage(id = null){
+      let character = localStorage.getItem(id)
+      return !character ? {} : JSON.parse(character);
+    },
+    saveCharacterToStorage(character){
+      localStorage.setItem(character.id, JSON.stringify(character));
+    },
+    setStorageCharacter(property, event){
+      this.storageCharacter = {...this.storageCharacter, [property]: event.target.value};
+      this.saveCharacterToStorage(this.storageCharacter);
+    }
   },
   watch: {
     selectedCharacter: function () {
-      this.getCharacter();
+      this.fetchCharacter();
     },
   },
 };
