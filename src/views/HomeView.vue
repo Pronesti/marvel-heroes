@@ -1,8 +1,18 @@
 <template>
-  <div class="home">
-    <ErrorMessage :error="error" />
-    <CharacterSearch @setCharacterId="setCharacterId" @error="setError"/>
-    <SelectedCharacter :selectedCharacter="selectedCharacter" @error="setError"/>
+  <div class="home flex flex-col justify-center">
+    <div class="sticky top-0">
+      <ErrorMessage :error="error" />
+    </div>
+    <div>
+      <CharacterSearch @setCharacterId="setCharacterId" @error="setError"/>
+    </div>
+    <div>
+      <SelectedCharacter :selectedCharacter="selectedCharacter" @error="setError"/>
+    </div>
+    <div>
+      <CharacterList groupName="Favorites" :group="$store.state.favorites" @setCharacterId="setCharacterId"/>
+      <CharacterList groupName="Blacklist" :group="$store.state.blacklist" @setCharacterId="setCharacterId"/>
+    </div>
   </div>
 </template>
 
@@ -10,6 +20,7 @@
 import SelectedCharacter from "@/components/SelectedCharacter.vue";
 import CharacterSearch from "@/components/CharacterSearch.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
+import CharacterList from "@/components/CharacterList.vue";
 
 
 export default {
@@ -18,6 +29,7 @@ export default {
     SelectedCharacter,
     CharacterSearch,
     ErrorMessage,
+    CharacterList,
   },
   data() {
     return {

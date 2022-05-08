@@ -2,7 +2,7 @@
   <div id="selectedCharacter">
     <div class="block md:flex md:items-center md:gap-3" v-if="character">
       <div class="characterImage flex-1 flex justify-center items-center">
-        <img class="w-72 md:w-auto" :src="getImage" :alt="character.name" />
+        <img class="w-72 max-w-[50%] md:w-auto" :src="getImage" :alt="character.name" />
       </div>
       <div class="flex-1 flex flex-col">
         <div class="flex-1">

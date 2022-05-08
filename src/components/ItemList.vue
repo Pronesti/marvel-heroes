@@ -1,6 +1,6 @@
 <template>
-  <div :id="groupName" class="itemList" v-if="group.items.length > 0">
-    <ul class="overflow-y-auto h-52 md:h-[32rem]">
+  <div :id="groupName" class="itemList overflow-y-auto h-52 md:h-[24rem]" v-if="group.items.length > 0">
+    <ul>
       <li v-for="(item, index) in group.items" :key="index + item.name" class="dark:text-slate-200">
         {{ item.name }}
       </li>
