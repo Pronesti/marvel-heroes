@@ -66,7 +66,7 @@
         </div>
       </div>
     </div>
-    <div class="h-full flex justify-center items-center" v-else>
+    <div class="flex justify-center items-center h-[60vh] md:h-[70vh] xl:h-[80vh]" v-else>
       <loading-spinner v-if="loading" />
       <span class="flex p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300" role="alert" v-else> Search character by name, comic title or series title.</span>
     </div>
