@@ -81,6 +81,7 @@
 <script>
 import md5 from "md5";
 import axios from "axios";
+import { debounce } from "lodash";
 
 export default {
   name: "CharacterSearch",
@@ -170,11 +171,11 @@ export default {
           this.setError(e);
         });
     },
-    getCharacters(searchTerm) {
-      this.getCharactersByName(searchTerm);
-      this.getCharactersByComic(searchTerm);
-      this.getCharactersBySeries(searchTerm);
-    },
+    getCharacters: debounce(function(){
+      this.getCharactersByName(this.searchTerm);
+      this.getCharactersByComic(this.searchTerm);
+      this.getCharactersBySeries(this.searchTerm);
+    }, 1000, { 'maxWait': 1000}),
     getThumbnail(character) {
       return character
         ? character.thumbnail.path + "." + character.thumbnail.extension
