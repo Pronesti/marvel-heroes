@@ -8,6 +8,14 @@
         <div class="flex-1">
           <div class="characterName p-3">
             <input type="text" class="text-2xl text-center rounded dark:text-slate-200 dark:bg-slate-500" :value="computedCharacter.name" @input="(e) => setStorageCharacter('name', e)" />
+            <div class="p-2">
+              <button class="text-slate-200 bg-slate-200 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center mr-2 dark:bg-slate-600" :class="{'bg-red-600 dark:bg-red-800': isFavorited}" @click="toggleFavorite">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </button>
+              <button class="text-slate-200 bg-slate-200 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center mr-2 dark:bg-slate-600" :class="{'bg-yellow-300 dark:bg-yellow-600': isBlacklisted}" @click="toggleBlacklist">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+            </div>
           </div>
           <div class="characterDescription min-h-[6rem] p-4 pr-8">
             <textarea class="w-full h-24 md:h-32 m-4 text-base p-2 rounded dark:text-slate-200 dark:bg-slate-500" :value="computedCharacter.description" @input="(e) => setStorageCharacter('description', e)" />
@@ -104,7 +112,13 @@ export default {
           ...this.character, 
           ...this.storageCharacter
           } 
-        },
+    },
+    isFavorited(){
+      return this.$store.state.favorites.findIndex((listCharacter) => listCharacter.id == this.selectedCharacter) !== -1;
+    },
+    isBlacklisted(){
+      return this.$store.state.blacklist.findIndex((listCharacter) => listCharacter.id == this.selectedCharacter) !== -1;
+    },
   },
   methods: {
     fetchCharacter() {
@@ -155,7 +169,13 @@ export default {
     setStorageCharacter(property, event){
       this.storageCharacter = {...this.storageCharacter, [property]: event.target.value};
       this.saveCharacterToStorage(this.storageCharacter);
-    }
+    },
+    toggleFavorite(){
+      this.$store.commit('toggleFavoriteCharacter', this.character);
+    },
+    toggleBlacklist(){
+      this.$store.commit('toggleBlacklistCharacter', this.character);
+    },
   },
   watch: {
     selectedCharacter: function () {
