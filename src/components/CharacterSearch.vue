@@ -104,7 +104,7 @@ export default {
           };
         })).flat();
 
-        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5);
+        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5).filter((character) => !this.$store.state.blacklist.map((character) => character.id).includes(character.id));
     },
       charactersBySeries(){
       let characters = this.bySeriesList.map((series) => series.characters.items.map((character) => { 
@@ -115,7 +115,7 @@ export default {
           };
         })).flat();
 
-        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5);
+        return [...new Map(characters.map(item => [item['id'], item])).values()].slice(0,5).filter((character) => !this.$store.state.blacklist.map((character) => character.id).includes(character.id));
     }
   },
   methods: {
@@ -141,7 +141,7 @@ export default {
 
       this.axiosGetRequest("characters", extraParams)
         .then((response) => {
-          this.byNameList = response.data.data.results;
+          this.byNameList = response.data.data.results.filter((character) => !this.$store.state.blacklist.map((character) => character.id).includes(character.id));
           this.showResults = true;
         })
         .catch((e) => {
